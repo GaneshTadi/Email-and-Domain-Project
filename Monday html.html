@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sample Plugin Api Implementation</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <script async=false>
+        (function() {
+            var src = window.location.host.split(".").slice(2).join(".") === "com.cn" ? "https://js-stratus.zohostatic.com.cn/sigma/client/sdk/v1/sigma-sdk.min.js" : "https://static.zohocdn.com/sigma/client/sdk/v1/sigma-sdk.min.js";
+            document.write('<script src="' + src + '"><\/script>');
+        })();
+    </script>
+    <script src="./js/jquery-min.js"></script>
+    <script src="./js/apiUtil.js"></script>
+    <script src="./js/appView.js"></script>
+    <script src="./js/initApp.js"></script>
+    <link href="./css/style.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+
+
+       
+
+        <v-app>
+            <br>
+
+
+            <template>
+  <v-card
+    :loading="loading"
+    class="mx-auto my-12"
+    max-width="100%"
+    style="width:500px;height:50%;"
+    
+   
+  >
+    <template slot="progress">
+      <v-progress-linear
+        color="deep-purple"
+        height="10"
+        indeterminate
+      ></v-progress-linear>
+      
+    </template>
+            <!--Prograss bar-->
+            <!--<div id="progress">-->
+            <!--     <v-progress-linear-->
+            <!-- style="display:none"-->
+
+            <!--       indeterminate-->
+            <!--       color="cyan"-->
+            <!-- ></v-progress-linear>-->
+            <!-- </div>-->
+            <!--Prograss bar-->
+            <center>
+               <v-card-title style="color:gray; font-size:14px; display:none;" id="centerDiv">SPAM EMAILS </v-card-title>
+           
+                <v-card-title style="color:gray; font-size:14.5px;" id="pre">THIS EXTENSION HELP TO YOU BLOCK EMAILS AND DOMAINS</v-card-title>
+            </center>
+            <!--<v-card-title>Open a mail to get view details </v-card-title>-->
+
+
+            <v-card-text id="Home" style="margin-top:-25px;">
+                <div id="maildet">
+
+                </div>
+
+                <div id="domain">
+
+                </div>
+
+
+
+                <v-row style="margin-top:5px; margin-bottom:150px;">
+                    <v-col cols="1">
+
+                    </v-col>
+                    <v-col cols="5">
+                        <v-btn id="allo" style="display:none; font-size:12px; color:blue;" size="small" onclick="fun()">
+                            Allow
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="5">
+
+                        <v-btn id="bloc" style="display:none; font-size:12px; color:blue;" size="small" onclick="block()">
+                            Block
+                        </v-btn>
+
+
+
+                    </v-col>
+                    <v-col cols="1">
+
+                    </v-col>
+                </v-row>
+
+            </v-card-text>
+
+
+            </v-card>
+
+            </template>
+
+            <!--success alert-->
+            <v-alert id="succ" style="font-size: 15px; display: none; margin-top: -310px; padding: 20px; variant:outlined" border="top" border-color="success" elevation="2">
+                <p style="display: none;" id="dsuut"> </p>
+                <p style="display: none;" id="suut"> </p>
+
+                <p id="error" style="font-size: 14px;display: none;"></p>
+                <p id="derror" style="font-size: 14px;display: none;"></p>
+                <label id="domalab" style="color: gray; font-size: 12px;display:none">Note:"Please click on continue if you want to remove the Domains or Emails, else we can do both at the same time from the blacklist."</label>
+
+
+                <v-row id="errorbtn">
+                    <label id="emaillab" style="color: gray; font-size: 12px;display:none margin-left: 14px"></label>
+                    <!--<label id="emaillab" style="color: gray; font-size: 12px;display:none margin-left: 14px">Note:"Please click on continue if you want to remove the Email from the blacklist."</label>-->
+
+                    <v-col cols="2">
+
+                    </v-col>
+                    <v-col cols="4">
+                        <v-btn id="cancel" color="info" onclick="cancel()" style="margin-left:-68%; font-size: 12px; width:150%;">Cancel</v-btn>
+                    </v-col>
+                    <v-col cols="4">
+                        <v-btn id="continu" color="info" onclick="Continue()" style="margin-left:-40%;  font-size: 12px; display:none; margin-left:0px">Continue</v-btn>
+                    </v-col>
+                    <v-col cols="2">
+
+                    </v-col>
+                </v-row>
+
+
+            </v-alert>
+
+
+            <!--end success alert-->
+
+
+            <!--block list alert-->
+            <v-alert id="bsucc" style="font-size: 15px; display: none; margin-top: -310px; padding: 20px; variant:outlined" border="top" border-color="success" elevation="2">
+                <p style="display: none;" id="bsuut"> </p>
+                <p id="bderror" style="font-size: 14px;display: none;"></p>
+                <p style="display: none;" id="bdsuut"> </p>
+                <p id="berror" style="font-size: 14px;display: none;"></p>
+                <label id="bdomalab" style="color: gray; font-size: 12px;display:none">Note:"Please click on continue if you want to remove the Domains or Emails, else we can do both at the same time from the whitelist."</label>
+
+
+
+
+                <v-row id="berrorbtn">
+                    <label id="bemaillab" style="color: gray; font-size: 12px;display:none"></label>
+                    <!--<label id="bemaillab" style="color: gray; font-size: 12px;display:none">Note:"Please click on continue if you want to remove the Email from the whitelist."</label>-->
+
+                    <v-col cols="2">
+
+                    </v-col>
+                    <v-col cols="4">
+                        <v-btn id="bcancel" color="info" onclick="bcancel()" style="margin-left:-68%; font-size: 12px; width:150%;">Cancell</v-btn>
+                    </v-col>
+                    <v-col cols="4">
+                        <v-btn id="bcontunue" color="info" onclick="bContinue()" style="margin-left:-40%;  font-size: 12px; display:none; margin-left:0px">Continue</v-btn>
+                    </v-col>
+                    <v-col cols="2">
+
+                    </v-col>
+                </v-row>
+
+
+            </v-alert>
+
+
+            <!--end blocklist alert-->
+
+            <!--Authorization error-->
+            <v-alert id="notacess" style="display: none;margin-top:-300px;height:40%" type="warning">
+                <p id="notacess1"> </p>
+                <v-btn id="break" style="font-size:12px; color:blue" size="small" onclick="exit()">
+                    Exit
+                </v-btn>
+            </v-alert>
+
+            <!--End Authorization error-->
+
+            <!--Connoctor fail error-->
+
+            <v-alert id="connect" style="display: none;margin-top:-300px;height:40%">
+                <p id="connect1" style="font-size:13px; color:gray"> </p>
+
+                <v-row>
+                    <v-col cols="4">
+                        <a href="https://mail.zoho.com/zm/#settings/integrations-settings/DeveloperSpace/connectors" target="_blank">click Here</a>
+                    </v-col>
+                    <v-col cols="4">
+
+                    </v-col>
+                    <v-col cols="4">
+                        <v-btn id="break" style="font-size:12px; color:blue" size="small" onclick="exit()">
+                            Exit
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
+            </v-alert>
+
+            <!--Connoctor fail error-->
+
+
+        </v-app>
+
+    </div>
+
+
+
+    <!--vuejs added-->
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data() {
+
+
+                return {
+
+
+                }
+            },
+        })
+    </script>
+
+</body>
+
+</html>
